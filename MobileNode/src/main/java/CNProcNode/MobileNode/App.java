@@ -166,32 +166,40 @@ public class App implements NodeConnectionListener, Runnable
         	   sumDeltaTime.addAndGet(System.currentTimeMillis() - sentTime);
            }
 		   String content = (String) Serialization.fromJavaByteStream(message.getContent());
-		   String[] tokens = content.split(":");
 		   
-		    System.out.println(nasId + " Received " + tokens[0] + " - " + tokens[2]);
+		   String[] tokens = content.split(":");
+		   		   
+		   if(tokens.length > 0) {
+			   System.out.println(nasId + " Received " + tokens[0] + " - " + tokens[3]);
+			   
+			   String[] msgContent = tokens[2].split("_");
 
-		   String[] msgContent = tokens[2].split("_");
-
-		   if(msgContent[0].equals("frequency")) {
-		       this.msgInterval = Long.parseLong(msgContent[1]);
+			   if(msgContent.length > 0 && msgContent[0].equals("frequency")) {				   
+			       this.msgInterval = Long.parseLong(msgContent[1]);
+			       System.out.println("Received frequency: "  + msgContent[1]);
+			   }
+			   			
+			   if(doesAuth) {
+			      if(auth.CheckHMAC(content)) {
+				 //System.out.println(nasId + " Check OK");	    	
+			      } else {
+				  //System.out.println(nasId + " Check NOK");
+			      }
+			   }
 		   }
-		   			
-		   if(doesAuth) {
-		      if(auth.CheckHMAC(content)) {
-			 //System.out.println(nasId + " Check OK");	    	
-		      } else {
-			  //System.out.println(nasId + " Check NOK");
-		      }
-		   }			
 		}
 	}
 		
 	
 	public void sendMessage(String content) {
-	      ApplicationMessage message = new ApplicationMessage();	      
-	      message.setContentObject(auth.addHMAC(content, nasId));	      
+	      ApplicationMessage message = new ApplicationMessage();
+	      
+	      if(doesAuth) {
+	    	  message.setContentObject(auth.addHMAC(content, nasId));
+	      }
 	 
 	      sentTime = System.currentTimeMillis();
+	      
 	      try {
 	          connection.value.sendMessage(message);
 	      } catch (IOException e) {
@@ -205,6 +213,7 @@ public class App implements NodeConnectionListener, Runnable
 	    		this.msgInterval = (long) (5000 + Math.floor((Math.random() * 85001)));
 	    	}
 	    	
+	    	System.out.println("Scheduled interval " + msgInterval);
 	    	timer.schedule(new task(), msgInterval);
 	      }
 	}

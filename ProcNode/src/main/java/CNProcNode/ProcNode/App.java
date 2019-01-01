@@ -38,9 +38,9 @@ public class App implements UDIDataReaderListener<ApplicationObject>, Runnable
 	
     public App(int id, int freq, boolean doesAuth, String address) {
     	nasId += Integer.toString(id);
-	this.doesAuth     = doesAuth;
-	this.authServer   = address;
-	this.frequency    = freq;
+		this.doesAuth     = doesAuth;
+		this.authServer   = address;
+		this.frequency    = freq;
 	
     	t = new Thread(this, nasId);
     	t.start();
@@ -86,42 +86,41 @@ public class App implements UDIDataReaderListener<ApplicationObject>, Runnable
     	String content = (String) Serialization.fromJavaByteStream(message.getContent());
     
     	String[] txt = content.split(":");
-    	////System.out.println(nasId + " received " + " - " + txt[3]);
+    	String msgInfo = "Received OK";
 
-	String msgInfo = "Received Auth_OK";
-	String[] msg = txt[3].split("_");
-
-	// Is it the first message?
-	if(msg[1].equals("0")) {
-	    msgInfo = "frequency_" + frequency;
-	}
-	
-    	if(doesAuth) {
-    		if(auth.CheckHMAC(content)) {
-	    		////System.out.println(nasId +  " Check OK: " + txt[3] + "\n");
-	    	
-		    	PrivateMessage privateMessage = new PrivateMessage();
-		    	privateMessage.setGatewayId(message.getGatewayId());
-		    	privateMessage.setNodeId(message.getSenderId());
-		    
-		    	ApplicationMessage appMsg = new ApplicationMessage();
-		    
-		    
-		    	msgInfo = auth.addHMAC(msgInfo, nasId);
-		    
-	    		try {
-					appMsg.setContent(Serialization.toJavaByteStream(msgInfo));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-	    	
-		    	privateMessage.setMessage(Serialization.toProtocolMessage(appMsg));
-		    	core.writeTopic(PrivateMessage.class.getSimpleName(), privateMessage);	    	
-    		} else {
-	    		////System.out.println(nasId + " Check NOK: " + txt[3] + "\n");
-	    	}
-    	}
+    	PrivateMessage privateMessage = new PrivateMessage();
+    	privateMessage.setGatewayId(message.getGatewayId());
+    	privateMessage.setNodeId(message.getSenderId());    
+    	ApplicationMessage appMsg = new ApplicationMessage();
+    	    	
+    	if(txt.length > 0) {
+        	System.out.println(nasId + " received " + " - " + txt[3]);
+        	
+			String[] msg = txt[3].split("_");			
+			// Is it the first message?
+			if(msg.length > 0 && msg[1].equals("0")) {
+			    msgInfo = "frequency_" + frequency;
+			}
+		
+	    	if(doesAuth) {
+	    		if(auth.CheckHMAC(content)) {
+		    		////System.out.println(nasId +  " Check OK: " + txt[3] + "\n");		    						    
+			    	msgInfo = auth.addHMAC(msgInfo, nasId);			    
+	    		} else {
+		    		////System.out.println(nasId + " Check NOK: " + txt[3] + "\n");
+	    			return;
+		    	}
+	    	}     	
+	    }
     	
+		try {
+			appMsg.setContent(Serialization.toJavaByteStream(msgInfo));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		    	
+
+    	privateMessage.setMessage(Serialization.toProtocolMessage(appMsg));
+    	core.writeTopic(PrivateMessage.class.getSimpleName(), privateMessage);	    	
 		count++; 	    
 	}
 		
