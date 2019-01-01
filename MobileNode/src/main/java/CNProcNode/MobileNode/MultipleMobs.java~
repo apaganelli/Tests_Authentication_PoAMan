@@ -1,0 +1,92 @@
+package CNProcNode.MobileNode;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicLong;
+
+/**
+ *
+ */
+public class MultipleMobs  
+{	
+	static long interval = 10000;
+	
+	public static void main( String[] args ) {
+		int num = 2;
+		int start = 1;
+		boolean doesAuth = true;
+
+		String addr = "localhost";
+		
+		//System.out.println( "Multiple Mobs - [start_id] [#threads] [doesAuth] [interval_sec] [server_addr]" );
+		
+		if(args.length > 0) {
+		    start = Integer.parseInt(args[0]);
+		    num = Integer.parseInt(args[1]);
+
+		    if (args[2].toLowerCase() == "f") {
+			doesAuth = false;		    
+		    } else {
+			doesAuth = true;
+		    }
+			
+		    interval = Long.parseLong(args[3]) * 1000;
+		    addr = args[4];
+			
+		}
+		
+		new MultipleMobs(start, num, doesAuth, addr);
+	}	 
+	
+
+	private final MultipleMobs instance = this;
+	AtomicLong sumDeltaTime = new AtomicLong(0L);
+	AtomicLong count = new AtomicLong(0L);
+	
+	class saveLog extends TimerTask {
+		public saveLog() {}
+		
+		@Override
+		public void run() 
+		{
+			long sdt, c;
+			synchronized(instance) {
+				sdt = sumDeltaTime.get();
+				c = count.get();
+			}
+			if(c > 0) {
+				double mean = sdt / c;
+				String dataStr = System.currentTimeMillis() + " " + mean + " " + sdt + " " + c + "\n";
+				try {
+				    Files.write(Paths.get("log_data.txt"), dataStr.getBytes(), StandardOpenOption.APPEND);
+				}catch (IOException e) {
+				    //exception handling left as an exercise for the reader
+				}
+			}
+		}
+	}
+	
+	Timer t;
+	
+    public MultipleMobs(int start, int amount, boolean does, String addr) {
+    	t = new Timer();
+    	
+    	t.scheduleAtFixedRate(new saveLog(), 0, 30 * 1000);
+    	
+		for(int i = 0; i < amount; i++) {
+			
+			new App(i+start, does, interval, addr, instance, count, sumDeltaTime);
+			
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}			
+		}		
+	}
+}

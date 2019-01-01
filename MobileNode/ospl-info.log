@@ -1,0 +1,56 @@
+========================================================================================
+Report      : INFO
+Date        : Sat Dec 22 01:02:36 -02 2018
+Description : ---------------------------------------------------------------
+              -- The service is using the following configuration settings --
+              ---------------------------------------------------------------
+              Domain (id)          : ospl_sp_ddsi (0)
+              Storage              : 0 Kbytes
+              Storage threshold    : 1024 Kbytes
+              Storage address      : Not available
+              Locking              : default
+              Memory mode          : Heap memory
+              Builtin topics       : true
+              Priority inheritance : false
+              SystemId             : 723950844 from [1,2147483647]
+Node        : arriba
+Process     : java <6552>
+Thread      : spliced 7f0bcc05b700
+Internals   : 6.7.180404OSS///The OpenSplice domain service/u_domain.c/659/0/1545447756.225055235/0
+========================================================================================
+Report      : INFO
+Date        : Sat Dec 22 01:02:36 -02 2018
+Description : Service cmsoap disabled
+Node        : arriba
+Process     : java <6552>
+Thread      : spliced 7f0bcc05b700
+Internals   : 6.7.180404OSS///OpenSplice domain service/sr_componentInfo.c/447/0/1545447756.226153426/0
+========================================================================================
+Report      : INFO
+Date        : Sat Dec 22 01:02:36 -02 2018
+Description : ++++++++++++++++++++++++++++++++++++++++++++++++
+              ++ The service 'splicedaemon' is now operational. 
+              ++++++++++++++++++++++++++++++++++++++++++++++++
+Node        : arriba
+Process     : java <6552>
+Thread      : spliced 7f0bcc05b700
+Internals   : 6.7.180404OSS///v_serviceChangeState/v_service.c/295/0/1545447756.233434843/0
+========================================================================================
+Report      : WARNING
+Date        : Sat Dec 22 01:02:36 -02 2018
+Description : using network interface enp0s3 (192.168.56.101) selected arbitrarily from: enp0s3, enp0s8
+
+Node        : arriba
+Process     : java <6552>
+Thread      : ddsi2 7f0bb82a5700
+Internals   : 6.7.180404OSS///ddsi2/q_nwif.c/988/0/1545447756.254115398/0
+========================================================================================
+Report      : INFO
+Date        : Sat Dec 22 01:02:36 -02 2018
+Description : ++++++++++++++++++++++++++++++++++++++++++++++++
+              ++ The service 'ddsi2' is now operational. 
+              ++++++++++++++++++++++++++++++++++++++++++++++++
+Node        : arriba
+Process     : java <6552>
+Thread      : ddsi2 7f0bb82a5700
+Internals   : 6.7.180404OSS///v_serviceChangeState/v_service.c/295/0/1545447756.310175105/0

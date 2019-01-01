@@ -1,0 +1,3 @@
+[submodule "RadiusTests"]
+	path = RadiusTests
+	url = https://github.com/apaganelli/CheckAuthentication.git
